@@ -20,6 +20,7 @@ p{margin:8px 0}a{color:var(--acc);overflow-wrap:anywhere}
 .btn{display:inline-block;background:var(--acc);color:#fff;font-weight:700;padding:10px 18px;border-radius:12px;text-decoration:none;margin:8px 0}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .btn.alt{background:transparent;color:var(--acc);border:2px solid var(--acc);padding:8px 16px;font:inherit;font-weight:700;cursor:pointer}
+.cp{background:none;border:0;padding:0;font:inherit;color:var(--acc);text-decoration:underline;cursor:pointer;overflow-wrap:anywhere}
 footer{color:var(--soft);font-size:14px;margin-top:20px;text-align:center}
 footer a{color:var(--soft)}
 </style>
@@ -30,15 +31,7 @@ footer a{color:var(--soft)}
 <div class="card">
 <h1>Tiny Skies support</h1>
 <p>Need help, found a bug, or have an idea? Email us and we'll get back to you.</p>
-<div class="row"><a class="btn" href="mailto:tinyskieshelp@icloud.com?subject=Tiny%20Skies">Email tinyskieshelp@icloud.com</a><button class="btn alt" id="copy" type="button">Copy email</button></div>
-<script>
-document.getElementById('copy').addEventListener('click', function () {
-  var b = this, t = 'tinyskieshelp@icloud.com';
-  function done(ok) { b.textContent = ok ? 'Copied!' : t; setTimeout(function () { b.textContent = 'Copy email'; }, 2000); }
-  function old() { var a = document.createElement('textarea'); a.value = t; a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select(); var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} a.remove(); done(ok); }
-  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(function () { done(true); }, old); else old();
-});
-</script>
+<div class="row"><a class="btn" href="mailto:tinyskieshelp@icloud.com?subject=Tiny%20Skies">Email tinyskieshelp@icloud.com</a><button class="btn alt" type="button" data-copy="tinyskieshelp@icloud.com" data-label="Copy email">Copy email</button></div>
 <h2>Got a new phone?</h2>
 <p>Anything you bought comes back: open the <b>Wings</b> tab and tap <b>Restore purchases</b> at the bottom.
 To move your airline itself, use <i>Settings → Backup</i> on the old phone to copy a backup code, then <i>Restore from code</i> on the new one.</p>
@@ -49,5 +42,16 @@ To move your airline itself, use <i>Settings → Backup</i> on the old phone to 
 </div>
 <footer><a href="../support/">Support</a> · <a href="../privacy/">Privacy policy</a> · © 2026 William Carrion</footer>
 </main>
+<script>
+// Anything with data-copy copies that text and briefly says "Copied!".
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('[data-copy]'); if (!b) return;
+  e.preventDefault();
+  var t = b.getAttribute('data-copy'), label = b.getAttribute('data-label') || t;
+  function done(ok) { b.textContent = ok ? 'Copied!' : t; clearTimeout(b._t); b._t = setTimeout(function () { b.textContent = label; }, 2000); }
+  function old() { var a = document.createElement('textarea'); a.value = t; a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select(); var ok = false; try { ok = document.execCommand('copy'); } catch (x) {} a.remove(); done(ok); }
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(function () { done(true); }, old); else old();
+});
+</script>
 </body>
 </html>
